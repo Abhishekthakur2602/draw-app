@@ -1,0 +1,62 @@
+[
+  {
+    "id": "renameColumn.User.name",
+    "label": "Rename column \"User\".\"name\" to \"firstname\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "firstname",
+        "table": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"name\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "User",
+          "name"
+        ]
+      },
+      {
+        "description": "ensure column \"firstname\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "User",
+          "firstname"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "rename column \"name\" to \"firstname\"",
+        "sql": "ALTER TABLE \"public\".\"User\" RENAME COLUMN \"name\" TO \"firstname\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"firstname\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "User",
+          "firstname"
+        ]
+      },
+      {
+        "description": "verify column \"name\" no longer exists",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "User",
+          "name"
+        ]
+      }
+    ]
+  }
+]

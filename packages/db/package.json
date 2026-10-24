@@ -1,0 +1,34 @@
+{
+  "name": "@repo/db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && mkdir -p dist/prisma && cp src/prisma/contract.d.ts dist/prisma/contract.d.ts",
+    "dev": "tsc --watch --preserveWatchOutput",
+    "clean": "rm -rf dist",
+    "contract:emit": "prisma contract emit",
+    "db:plan": "prisma migration plan",
+    "db:migrate": "prisma db migrate",
+    "db:status": "prisma migration status"
+  },
+  "devDependencies": {
+    "@prisma/cli-engine": "0.7.0",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "26.4.1",
+    "prisma": "8.0.0-rc.23"
+  },
+  "dependencies": {
+    "@prisma/orm-postgres": "8.0.0-rc.18",
+    "dotenv": "^18.0.8"
+  }
+}

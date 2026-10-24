@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.User.avatar",
+    "label": "Add column \"avatar\" to \"User\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "avatar",
+        "table": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"avatar\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "User",
+          "avatar"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"avatar\"",
+        "sql": "ALTER TABLE \"public\".\"User\" ADD COLUMN \"avatar\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"avatar\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "User",
+          "avatar"
+        ]
+      }
+    ]
+  }
+]
